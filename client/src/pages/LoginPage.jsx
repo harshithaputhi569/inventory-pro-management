@@ -36,8 +36,11 @@ export default function LoginPage() {
     const result = await login({ ...data, intendedRole: loginMode });
     if (result.success) {
       toast.success(`Welcome back, ${loginMode}!`);
-      const defaultPath = loginMode === 'staff' ? '/staff-home' : '/dashboard';
-      navigate(location.state?.from?.pathname || defaultPath, { replace: true });
+      const userRole = useAuthStore.getState().user?.role || loginMode;
+      const defaultPath = userRole === 'staff' ? '/staff-home' : '/dashboard';
+      const fromPath = location.state?.from?.pathname;
+      const targetPath = (fromPath && fromPath !== '/staff-home' && fromPath !== '/login') ? fromPath : defaultPath;
+      navigate(targetPath, { replace: true });
     } else if (result.needsVerification) {
       toast.error('Email verification required.');
       navigate(`/verify-email?email=${encodeURIComponent(result.email)}`);

@@ -166,23 +166,30 @@ export default function UsersPage({ hideHeader }) {
   const [showAddModal, setShowAddModal] = useState(false);
   
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [selectedBranch, setSelectedBranch] = useState('');
 
   const isAdmin = currentUser?.role === 'admin';
   const isManager = currentUser?.role === 'manager';
   const canAdd = isAdmin || isManager;
 
+  // Debounce search input by 400ms
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 400);
+    return () => clearTimeout(timer);
+  }, [search]);
+
   useEffect(() => { 
     fetchBranches();
-    fetchUsers({ search, branchId: selectedBranch }); 
+    fetchUsers({ search: debouncedSearch, branchId: selectedBranch }); 
 
     // Auto-refresh for real-time online status
     const interval = setInterval(() => {
-      fetchUsers({ search, branchId: selectedBranch });
+      fetchUsers({ search: debouncedSearch, branchId: selectedBranch });
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [search, selectedBranch]);
+  }, [debouncedSearch, selectedBranch]);
   
     const handleDelete = async (id) => {
       if (window.confirm('Are you sure you want to deactivate this account?')) {
@@ -197,7 +204,7 @@ export default function UsersPage({ hideHeader }) {
         {!hideHeader && (
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">User Management</h1>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Staff Management</h1>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Control staff access and branch assignments</p>
             </div>
             {canAdd && (
@@ -333,7 +340,7 @@ export default function UsersPage({ hideHeader }) {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800">
-                    <th className="text-left px-6 py-4 font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">User</th>
+                    <th className="text-left px-6 py-4 font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Staff</th>
                     <th className="text-left px-6 py-4 font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Role</th>
                     <th className="text-left px-6 py-4 font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Branch</th>
                     <th className="text-left px-6 py-4 font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Status</th>

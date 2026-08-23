@@ -102,7 +102,9 @@ export default function App() {
           path="/staff-home"
           element={
             <ProtectedRoute>
-              <AppLayout><StaffHomePage /></AppLayout>
+              <RoleRoute allowedRoles={['staff']}>
+                <AppLayout><StaffHomePage /></AppLayout>
+              </RoleRoute>
             </ProtectedRoute>
           }
         />

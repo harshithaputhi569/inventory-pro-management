@@ -277,7 +277,7 @@ export default function DashboardPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
-            Welcome back, {user?.fullName?.split(' ')[0]}! 👋
+            Welcome back, {user?.fullName || 'Admin'}! 👋
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-0.5 text-sm">
             Here's what's happening with your inventory today.
