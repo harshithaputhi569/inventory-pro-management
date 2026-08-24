@@ -26,29 +26,10 @@ connectDB();
 
 const app = express();
 
-// ─── Security Middleware ──────────────────────────────────────────────────────
-app.use(helmet()); // Sets secure HTTP headers
+// Enable trust proxy for Render / reverse proxies
+app.set('trust proxy', 1);
 
-// Rate limiting — max 1000 requests per 15 minutes per IP (increased for development)
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 1000,
-  message: { success: false, message: 'Too many requests, please try again later.' },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-app.use('/api', limiter);
-
-// Stricter rate limit for auth routes — max 10 per 15 min
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
-  message: { success: false, message: 'Too many login attempts, please try again later.' },
-});
-app.use('/api/auth/login', authLimiter);
-app.use('/api/auth/register', authLimiter);
-
-// ─── CORS ─────────────────────────────────────────────────────────────────────
+// ─── CORS (Must be the VERY FIRST middleware) ──────────────────────────────────
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
@@ -78,6 +59,31 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   })
 );
+
+// ─── Security Middleware ──────────────────────────────────────────────────────
+app.use(helmet({ crossOriginResourcePolicy: false })); // Sets secure HTTP headers
+
+// Rate limiting — max 1000 requests per 15 minutes per IP
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 1000,
+  message: { success: false, message: 'Too many requests, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api', limiter);
+
+// Stricter rate limit for auth routes — max 50 per 15 min
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 50,
+  message: { success: false, message: 'Too many login attempts, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', authLimiter);
+
 
 
 // ─── Body Parsing ─────────────────────────────────────────────────────────────
