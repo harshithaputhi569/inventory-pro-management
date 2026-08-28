@@ -63,7 +63,7 @@ function InspectionModal({ topProducts, user, onClose }) {
   const [mismatchedProducts, setMismatchedProducts] = useState([]);
   const [isFinished, setIsFinished] = useState(false);
   const [loadingBatch, setLoadingBatch] = useState(false);
-  
+
   const getNextProduct = (currentInspectedIds) => {
     if (topProducts && topProducts.length > 0) {
       for (const tp of topProducts) {
@@ -84,15 +84,15 @@ function InspectionModal({ topProducts, user, onClose }) {
 
   const handleNext = (isMismatch = false) => {
     if (!currentProduct) return;
-    
+
     if (isMismatch) {
       setMismatchedProducts(prev => [...prev, currentProduct]);
     }
-    
+
     const newInspectedIds = new Set(inspectedIds);
     newInspectedIds.add(currentProduct._id);
     setInspectedIds(newInspectedIds);
-    
+
     const nextProd = getNextProduct(newInspectedIds);
     if (nextProd) {
       setCurrentProduct(nextProd);
@@ -132,7 +132,7 @@ function InspectionModal({ topProducts, user, onClose }) {
             </button>
           </div>
           <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/30 shadow-xl">
-             <Eye className="w-10 h-10 text-white" />
+            <Eye className="w-10 h-10 text-white" />
           </div>
           <h2 className="text-xl font-black uppercase tracking-widest">Product Inspection</h2>
           <p className="text-xs opacity-75 mt-1">Physical Stock Audit Tool</p>
@@ -147,20 +147,20 @@ function InspectionModal({ topProducts, user, onClose }) {
           ) : currentProduct && !isFinished ? (
             <>
               <div className="flex items-center gap-4">
-                 <div className="w-16 h-16 rounded-xl bg-gray-100 dark:bg-gray-800 overflow-hidden border border-gray-100 dark:border-gray-800 flex-shrink-0">
-                   {currentProduct.image ? (
-                     <img src={currentProduct.image} alt={currentProduct.name} className="w-full h-full object-cover" />
-                   ) : (
-                     <div className="w-full h-full flex items-center justify-center text-gray-300">
-                       <Package className="w-6 h-6" />
-                     </div>
-                   )}
-                 </div>
-                 <div className="min-w-0">
-                    <p className="text-[10px] text-gray-400 font-mono uppercase tracking-widest">{currentProduct.sku}</p>
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white truncate">{currentProduct.name}</h3>
-                    <p className="text-xs text-primary-600 dark:text-primary-400 font-bold">{currentProduct.category?.name || 'General'}</p>
-                 </div>
+                <div className="w-16 h-16 rounded-xl bg-gray-100 dark:bg-gray-800 overflow-hidden border border-gray-100 dark:border-gray-800 flex-shrink-0">
+                  {currentProduct.image ? (
+                    <img src={currentProduct.image} alt={currentProduct.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-300">
+                      <Package className="w-6 h-6" />
+                    </div>
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] text-gray-400 font-mono uppercase tracking-widest">{currentProduct.sku}</p>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white truncate">{currentProduct.name}</h3>
+                  <p className="text-xs text-primary-600 dark:text-primary-400 font-bold">{currentProduct.category?.name || 'General'}</p>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -177,30 +177,30 @@ function InspectionModal({ topProducts, user, onClose }) {
               </div>
 
               <div className="pt-2 flex flex-col gap-3">
-                 <button 
+                <button
                   onClick={() => handleNext(false)}
                   className="flex items-center justify-center gap-2 w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold shadow-lg shadow-emerald-200 dark:shadow-none hover:bg-emerald-700 transition-all"
-                 >
-                   <CheckCircle2 className="w-5 h-5" /> Stock Matches
-                 </button>
-                 <button 
+                >
+                  <CheckCircle2 className="w-5 h-5" /> Stock Matches
+                </button>
+                <button
                   onClick={() => handleNext(true)}
                   className="flex items-center justify-center gap-2 w-full py-4 bg-rose-600 text-white rounded-2xl font-bold shadow-lg shadow-rose-200 dark:shadow-none hover:bg-rose-700 transition-all"
-                 >
-                   <AlertTriangle className="w-5 h-5" /> Stock Mismatch
-                 </button>
-                 <button 
+                >
+                  <AlertTriangle className="w-5 h-5" /> Stock Mismatch
+                </button>
+                <button
                   onClick={() => handleNext(false)}
                   className="w-full py-3 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-2xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all mt-2"
-                 >
-                   Skip to Next Product
-                 </button>
-                 <button 
+                >
+                  Skip to Next Product
+                </button>
+                <button
                   onClick={() => setIsFinished(true)}
                   className="w-full py-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-2xl font-bold text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
-                 >
-                   Finish Inspection Early
-                 </button>
+                >
+                  Finish Inspection Early
+                </button>
               </div>
             </>
           ) : (
@@ -208,25 +208,25 @@ function InspectionModal({ topProducts, user, onClose }) {
               <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Inspection Complete</h3>
               <p className="text-gray-500 text-sm mb-6">You inspected {inspectedIds.size} product{inspectedIds.size !== 1 ? 's' : ''}.</p>
-              
+
               {mismatchedProducts.length > 0 ? (
                 <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800">
-                   <div className="flex items-center justify-between mb-4">
-                     <h4 className="font-bold text-gray-900 dark:text-white text-sm">Mismatches Found ({mismatchedProducts.length})</h4>
-                   </div>
-                   <button 
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="font-bold text-gray-900 dark:text-white text-sm">Mismatches Found ({mismatchedProducts.length})</h4>
+                  </div>
+                  <button
                     onClick={() => generateMismatchReportPDF(mismatchedProducts, user)}
                     className="flex items-center justify-center gap-2 w-full py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-2xl font-bold text-sm shadow-lg hover:opacity-90 transition-opacity"
-                   >
-                     <FileDown className="w-4 h-4" /> Download Mismatch Report
-                   </button>
+                  >
+                    <FileDown className="w-4 h-4" /> Download Mismatch Report
+                  </button>
                 </div>
               ) : (
                 <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-2xl text-sm font-medium">
                   No mismatches found during this session! Great job.
                 </div>
               )}
-              <button 
+              <button
                 onClick={onClose}
                 className="w-full py-3 mt-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 rounded-2xl font-bold text-sm"
               >
@@ -254,8 +254,8 @@ export default function DashboardPage() {
   const hideTax = (isStaff && settings?.privacy?.hideStaffTaxDetails !== false) || settings?.privacy?.hideAllFinancialDetails;
   const hidePayment = (isStaff && settings?.privacy?.hideStaffPaymentMethod !== false) || settings?.privacy?.hideAllFinancialDetails;
 
-  useEffect(() => { 
-    fetchSummary(); 
+  useEffect(() => {
+    fetchSummary();
     fetchProducts({ limit: 100 }); // Pre-fetch first batch for inspection
     if (!settings) fetchSettings();
   }, [settings]);
@@ -403,34 +403,35 @@ export default function DashboardPage() {
               </div>
 
               {/* Desktop table */}
-              <div className="hidden sm:block overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="bg-gray-50/50 dark:bg-gray-800/50">
-                    <tr>
-                      <th className="text-left px-5 py-3 font-medium text-gray-500 text-xs">Invoice</th>
-                      <th className="text-left px-5 py-3 font-medium text-gray-500 text-xs">Customer</th>
-                      {!hidePrice && <th className="text-right px-5 py-3 font-medium text-gray-500 text-xs">Amount</th>}
-                      <th className="text-center px-5 py-3 font-medium text-gray-500 text-xs">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                    {recentSales.map(sale => (
-                      <tr key={sale._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/20 transition-colors">
-                        <td className="px-5 py-3 font-medium text-gray-900 dark:text-white text-sm">{sale.invoiceNumber}</td>
-                        <td className="px-5 py-3">
-                          <p className="text-gray-900 dark:text-white text-sm">{sale.customer?.name || 'Walk-in'}</p>
-                          <p className="text-xs text-gray-500">{new Date(sale.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                        </td>
-                        {!hidePrice && <td className="px-5 py-3 text-right font-medium text-primary-600">₹{sale.totalAmount.toLocaleString('en-IN')}</td>}
-                        <td className="px-5 py-3 text-center">
-                          <button onClick={() => generateInvoicePDF(sale, { hidePrice, hideTax, hidePaymentMethod: hidePayment })} className="text-gray-400 hover:text-primary-600 transition-colors" title="Download Invoice">
-                            <FileDown className="w-5 h-5 mx-auto" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="hidden sm:block w-full">
+                {/* Header */}
+                <div className={`grid ${!hidePrice ? 'grid-cols-4' : 'grid-cols-3'} w-full bg-gray-50/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800`}>
+                  <div className="px-6 py-3 text-left font-medium text-gray-500 text-xs">Invoice</div>
+                  <div className="px-6 py-3 text-left font-medium text-gray-500 text-xs">Customer</div>
+                  {!hidePrice && <div className="px-6 py-3 text-center font-medium text-gray-500 text-xs">Amount</div>}
+                  <div className="px-6 py-3 text-center font-medium text-gray-500 text-xs">Action</div>
+                </div>
+                {/* Rows */}
+                <div className="divide-y divide-gray-100 dark:divide-gray-800">
+                  {recentSales.map(sale => (
+                    <div
+                      key={sale._id}
+                      className={`grid ${!hidePrice ? 'grid-cols-4' : 'grid-cols-3'} w-full hover:bg-gray-50 dark:hover:bg-gray-800/20 transition-colors`}
+                    >
+                      <div className="px-6 py-3 font-medium text-gray-900 dark:text-white text-sm truncate self-center">{sale.invoiceNumber}</div>
+                      <div className="px-6 py-3 self-center min-w-0">
+                        <p className="text-gray-900 dark:text-white text-sm truncate">{sale.customer?.name || 'Walk-in'}</p>
+                        <p className="text-xs text-gray-500">{new Date(sale.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                      </div>
+                      {!hidePrice && <div className="px-6 py-3 text-center font-medium text-primary-600 self-center">₹{sale.totalAmount.toLocaleString('en-IN')}</div>}
+                      <div className="px-6 py-3 text-center self-center">
+                        <button onClick={() => generateInvoicePDF(sale, { hidePrice, hideTax, hidePaymentMethod: hidePayment })} className="text-gray-400 hover:text-primary-600 transition-colors" title="Download Invoice">
+                          <FileDown className="w-5 h-5 mx-auto" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </>
           )}

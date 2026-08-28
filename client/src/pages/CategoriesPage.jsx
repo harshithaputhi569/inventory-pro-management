@@ -60,7 +60,7 @@ function CategoryModal({ category, onClose }) {
           )}
           <div>
             <label className="label">Name <span className="text-red-400">*</span></label>
-            <input {...register('name')} className={`input ${errors.name ? 'input-error' : ''}`} placeholder="e.g. Electronics" />
+            <input {...register('name')} className={`input ${errors.name ? 'input-error' : ''}`} placeholder="e.g. Natural Stone" />
             {errors.name && <p className="error-text"><AlertCircle className="w-3 h-3" />{errors.name.message}</p>}
           </div>
           <div>

@@ -99,7 +99,7 @@ export default function SettingsPage({ hideHeader }) {
   }
 
   return (
-    <div className="max-w-4xl mx-auto pb-10 overflow-x-hidden">
+    <div className="max-w-4xl pb-10 overflow-x-hidden">
       {!hideHeader && (
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Settings</h1>

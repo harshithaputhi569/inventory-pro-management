@@ -57,10 +57,10 @@ export default function ProductModal({ product, onClose, onSaved }) {
       supplier: product.supplier,
       image: product.image || '',
       color: product.color || '#3b82f6',
-    } : { 
-      unit: 'pcs', 
-      minStockLevel: 5, 
-      costPrice: 0, 
+    } : {
+      unit: 'pcs',
+      minStockLevel: 5,
+      costPrice: 0,
       color: '#3b82f6',
       damagedStock: 0,
       sampleStock: 0,
@@ -110,7 +110,7 @@ export default function ProductModal({ product, onClose, onSaved }) {
           {/* Name */}
           <div>
             <label className="label">Product Name <span className="text-red-400">*</span></label>
-            <input {...register('name')} className={`input ${errors.name ? 'input-error' : ''}`} placeholder="e.g. Wireless Mouse" />
+            <input {...register('name')} className={`input ${errors.name ? 'input-error' : ''}`} placeholder="e.g. ABC Tiles" />
             {errors.name && <p className="error-text"><AlertCircle className="w-3 h-3" />{errors.name.message}</p>}
           </div>
 

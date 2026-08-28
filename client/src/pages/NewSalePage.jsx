@@ -264,7 +264,7 @@ export default function NewSalePage() {
             <InvoiceField icon={Calendar} label="Voucher Date" value={invoiceDate} readOnly />
           </div>
         </div>
- 
+
         {/* Products Table */}
         <div className="px-6 py-4">
           <div className="flex items-center justify-between mb-3 border-b border-gray-100 dark:border-gray-800 pb-2">
@@ -306,9 +306,9 @@ export default function NewSalePage() {
                             if (!isActive) return null;
                             return (
                               <span key={flag} className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${flag === 'isSelling' ? 'bg-primary-50 text-primary-700 border border-primary-200/50' :
-                                  flag === 'isSample' ? 'bg-green-50 text-green-700 border border-green-200/50' :
-                                    flag === 'isDamaged' ? 'bg-red-50 text-red-700 border border-red-200/50' :
-                                      'bg-purple-50 text-purple-700 border border-purple-200/50'
+                                flag === 'isSample' ? 'bg-green-50 text-green-700 border border-green-200/50' :
+                                  flag === 'isDamaged' ? 'bg-red-50 text-red-700 border border-red-200/50' :
+                                    'bg-purple-50 text-purple-700 border border-purple-200/50'
                                 }`}>
                                 {labels[flag]}
                               </span>

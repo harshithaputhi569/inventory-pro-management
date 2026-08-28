@@ -164,7 +164,7 @@ export default function ProfilePage() {
     <div className="space-y-6">
       {/* Tab Switcher Removed */}
 
-      <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
+      <div className="max-w-4xl space-y-6 animate-fade-in">
           <div className="mb-2">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Account Settings</h1>
             <p className="text-sm text-gray-500">Manage your profile and workspace information</p>
@@ -220,24 +220,7 @@ export default function ProfilePage() {
                 </p>
               </div>
 
-              {/* Manage Branches Card — admin only */}
-              {isAdmin && (
-                <button
-                  onClick={() => navigate('/branches')}
-                  className="w-full card p-5 flex items-center justify-between hover:shadow-md transition-all group border border-transparent hover:border-primary-200 dark:hover:border-primary-800"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 flex-shrink-0">
-                      <GitBranch className="w-5 h-5" />
-                    </div>
-                    <div className="text-left">
-                      <p className="font-bold text-gray-900 dark:text-white text-sm leading-tight">Manage Branches</p>
-                      <p className="text-xs text-gray-400 font-medium mt-0.5">View &amp; manage store locations</p>
-                    </div>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-primary-500 transition-colors" />
-                </button>
-              )}
+
             </div>
 
             {/* Right Column: Edit Profile */}
@@ -341,6 +324,25 @@ export default function ProfilePage() {
                   </div>
                 </div>
               </div>
+
+              {/* Manage Branches Card — admin only */}
+              {isAdmin && (
+                <button
+                  onClick={() => navigate('/branches')}
+                  className="w-full card p-5 flex items-center justify-between hover:shadow-md transition-all group border border-transparent hover:border-primary-200 dark:hover:border-primary-800"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 flex-shrink-0">
+                      <GitBranch className="w-5 h-5" />
+                    </div>
+                    <div className="text-left">
+                      <p className="font-bold text-gray-900 dark:text-white text-sm leading-tight">Manage Branches</p>
+                      <p className="text-xs text-gray-400 font-medium mt-0.5">View &amp; manage store locations</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-primary-500 transition-colors" />
+                </button>
+              )}
             </div>
           </div>
         </div>

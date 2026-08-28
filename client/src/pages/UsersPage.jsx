@@ -337,55 +337,57 @@ export default function UsersPage({ hideHeader }) {
           {/* ── DESKTOP TABLE (hidden on mobile) ─────────────────────────── */}
           <div className="card overflow-hidden hidden md:block">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm table-fixed">
                 <thead>
                   <tr className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800">
-                    <th className="text-left px-6 py-4 font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Staff</th>
-                    <th className="text-left px-6 py-4 font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Role</th>
-                    <th className="text-left px-6 py-4 font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Branch</th>
-                    <th className="text-left px-6 py-4 font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                    {isAdmin && <th className="text-right px-6 py-4 font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Actions</th>}
+                    <th className="w-1/5 text-left px-4 py-4 font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-xs">Staff</th>
+                    <th className="w-1/5 text-center px-4 py-4 font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-xs">Role</th>
+                    <th className="w-1/5 text-center px-4 py-4 font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-xs">Branch</th>
+                    <th className="w-1/5 text-center px-4 py-4 font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-xs">Status</th>
+                    {isAdmin && <th className="w-1/5 text-center px-4 py-4 font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-xs">Actions</th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
                   {users.map((u) => (
                     <tr key={u._id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/20 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center font-bold text-gray-600 dark:text-gray-400 uppercase">
+                      <td className="w-1/5 px-4 py-4">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center font-bold text-gray-600 dark:text-gray-400 uppercase flex-shrink-0">
                             {u.fullName.charAt(0)}
                           </div>
-                          <div>
-                            <p className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                              {u.fullName} 
-                              {u._id === currentUser.id && <span className="text-[10px] text-primary-600 font-normal">(You)</span>}
-                              <span className={`w-2 h-2 rounded-full ${u.isOnline ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`} />
+                          <div className="min-w-0">
+                            <p className="font-bold text-gray-900 dark:text-white flex items-center gap-2 truncate">
+                              {u.fullName}
+                              {u._id === currentUser.id && <span className="text-[10px] text-primary-600 font-normal whitespace-nowrap">(You)</span>}
+                              <span className={`w-2 h-2 rounded-full flex-shrink-0 ${u.isOnline ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`} />
                             </p>
-                            <p className="text-xs text-gray-500 font-mono">@{u.username}</p>
-                            {u.phone && <p className="text-xs text-gray-400 flex items-center gap-1 mt-0.5"><Phone className="w-3 h-3" />{u.phone}</p>}
+                            <p className="text-xs text-gray-500 font-mono truncate">@{u.username}</p>
+                            {u.phone && <p className="text-xs text-gray-400 flex items-center gap-1 mt-0.5 truncate"><Phone className="w-3 h-3 flex-shrink-0" />{u.phone}</p>}
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="w-1/5 px-4 py-4 text-center">
                         <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${roleColors[u.role]}`}>{u.role}</span>
                       </td>
-                      <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
+                      <td className="w-1/5 px-4 py-4 text-center text-gray-600 dark:text-gray-300">
                         {u.branchId ? (
-                          <div className="flex items-center gap-1.5"><Store className="w-3.5 h-3.5 opacity-50" />{u.branchId.name}</div>
+                          <div className="flex items-center justify-center gap-1.5 truncate"><Store className="w-3.5 h-3.5 opacity-50 flex-shrink-0" /><span className="truncate">{u.branchId.name}</span></div>
                         ) : (
                           <span className="text-gray-400 text-xs italic">Unassigned</span>
                         )}
                       </td>
-                      <td className="px-6 py-4">
-                        {u.isActive ? (
-                          <div className="flex items-center gap-1.5 text-green-600 text-xs font-medium"><Check className="w-3.5 h-3.5" /> Active</div>
-                        ) : (
-                          <div className="flex items-center gap-1.5 text-red-500 text-xs font-medium"><Shield className="w-3.5 h-3.5" /> Inactive</div>
-                        )}
+                      <td className="w-1/5 px-4 py-4">
+                        <div className="flex justify-center">
+                          {u.isActive ? (
+                            <div className="flex items-center gap-1.5 text-green-600 text-xs font-medium"><Check className="w-3.5 h-3.5" /> Active</div>
+                          ) : (
+                            <div className="flex items-center gap-1.5 text-red-500 text-xs font-medium"><Shield className="w-3.5 h-3.5" /> Inactive</div>
+                          )}
+                        </div>
                       </td>
                       {isAdmin || (isManager && u.role === 'staff') ? (
-                        <td className="px-6 py-4 text-right">
-                          <div className="flex items-center justify-end gap-1">
+                        <td className="w-1/5 px-4 py-4">
+                          <div className="flex items-center justify-center gap-1">
                             <button onClick={() => setEditUser(u)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-500 hover:text-primary-600">
                               <Pencil className="w-4 h-4" />
                             </button>
@@ -397,9 +399,7 @@ export default function UsersPage({ hideHeader }) {
                           </div>
                         </td>
                       ) : isAdmin && (
-                        <td className="px-6 py-4 text-right">
-                          {/* Placeholder for table alignment if needed */}
-                        </td>
+                        <td className="w-1/5 px-4 py-4"></td>
                       )}
                     </tr>
                   ))}
