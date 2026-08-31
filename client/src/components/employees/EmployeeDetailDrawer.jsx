@@ -10,34 +10,50 @@ import useSettingsStore from '../../store/settingsStore';
 import useAuthStore from '../../store/authStore';
 
 const DATE_PRESETS = [
+  { label: 'All Time', key: 'all' },
+  { label: 'This Month', key: 'month' },
   { label: 'Today', key: 'today' },
   { label: 'Yesterday', key: 'yesterday' },
   { label: 'This Week', key: 'week' },
-  { label: 'This Month', key: 'month' },
   { label: 'This Year', key: 'year' },
   { label: 'Custom', key: 'custom' },
 ];
 
+const toLocalDateStr = (d) => {
+  if (!d) return '';
+  const date = new Date(d);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 function getPresetDates(key) {
   const now = new Date();
-  const fmt = (d) => d.toISOString().split('T')[0];
-  if (key === 'today') return { startDate: fmt(now), endDate: fmt(now) };
+  if (key === 'all') return { startDate: '', endDate: '' };
+  if (key === 'today') return { startDate: toLocalDateStr(now), endDate: toLocalDateStr(now) };
   if (key === 'yesterday') {
     const y = new Date(now); y.setDate(y.getDate() - 1);
-    return { startDate: fmt(y), endDate: fmt(y) };
+    return { startDate: toLocalDateStr(y), endDate: toLocalDateStr(y) };
   }
   if (key === 'week') {
     const s = new Date(now); s.setDate(s.getDate() - s.getDay());
-    return { startDate: fmt(s), endDate: fmt(now) };
+    return { startDate: toLocalDateStr(s), endDate: toLocalDateStr(now) };
   }
   if (key === 'month') {
-    return { startDate: fmt(new Date(now.getFullYear(), now.getMonth(), 1)), endDate: fmt(now) };
+    return { startDate: toLocalDateStr(new Date(now.getFullYear(), now.getMonth(), 1)), endDate: toLocalDateStr(now) };
   }
   if (key === 'year') {
-    return { startDate: `${now.getFullYear()}-01-01`, endDate: fmt(now) };
+    return { startDate: `${now.getFullYear()}-01-01`, endDate: toLocalDateStr(now) };
   }
   return null;
 }
+
+const STATUS_COLORS = {
+  'High Performer': 'bg-emerald-500 text-white',
+  'Good': 'bg-blue-500 text-white',
+  'Stable': 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
+};
 
 const fmt = (d, type = 'full') => {
   if (!d) return 'N/A';
@@ -311,7 +327,16 @@ export default function EmployeeDetailDrawer({ employee, onClose }) {
               <User className="w-6 h-6 text-white" />
             </div>
             <div className="min-w-0">
-              <h2 className="font-bold text-white text-lg leading-tight truncate">{employee.name}</h2>
+              <div className="flex items-center gap-2">
+                <h2 className="font-bold text-white text-lg leading-tight truncate">{employee.name}</h2>
+                {(employee.status || data?.kpi?.status) && (
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm ${
+                    STATUS_COLORS[employee.status || data?.kpi?.status] || 'bg-white/20 text-white'
+                  }`}>
+                    {employee.status || data?.kpi?.status}
+                  </span>
+                )}
+              </div>
               <p className="text-primary-100 text-xs truncate">{employee.email}</p>
               <div className="flex items-center gap-3 mt-0.5 truncate">
                 {employee.phone && <p className="text-primary-200 text-[10px] truncate">{employee.phone}</p>}

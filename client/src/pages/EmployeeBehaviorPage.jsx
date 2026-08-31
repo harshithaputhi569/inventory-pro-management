@@ -27,7 +27,14 @@ const fmt = (d) => {
   });
 };
 
-const isoDate = (d) => d.toISOString().split('T')[0];
+const isoDate = (d) => {
+  if (!d) return '';
+  const date = new Date(d);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 export default function EmployeeBehaviorPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -56,7 +63,9 @@ export default function EmployeeBehaviorPage() {
   const fetchBehaviorData = async () => {
     try {
       setLoading(true);
-      const params = { ...dateRange };
+      const params = {};
+      if (dateRange.startDate) params.startDate = dateRange.startDate;
+      if (dateRange.endDate) params.endDate = dateRange.endDate;
       if (selectedBranch) params.branchId = selectedBranch;
       const { data } = await employeeAPI.getBehavior(params);
       setEmployees(data.data);
@@ -161,6 +170,31 @@ export default function EmployeeBehaviorPage() {
               </div>
             )}
 
+            {/* Quick Presets */}
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setDateRange({
+                  startDate: isoDate(new Date(now.getFullYear(), now.getMonth(), 1)),
+                  endDate: isoDate(now)
+                })}
+                className={`text-xs px-2.5 py-1.5 rounded-xl font-medium transition ${
+                  dateRange.startDate ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400 border border-primary-200 dark:border-primary-800 font-bold' : 'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50'
+                }`}
+              >
+                This Month
+              </button>
+              <button
+                type="button"
+                onClick={() => setDateRange({ startDate: '', endDate: '' })}
+                className={`text-xs px-2.5 py-1.5 rounded-xl font-medium transition ${
+                  !dateRange.startDate && !dateRange.endDate ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400 border border-primary-200 dark:border-primary-800 font-bold' : 'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50'
+                }`}
+              >
+                All Time
+              </button>
+            </div>
+
             {/* Date range */}
             <div className="flex items-center gap-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-1.5 flex-1 sm:flex-none">
               <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
@@ -174,6 +208,16 @@ export default function EmployeeBehaviorPage() {
                 value={dateRange.endDate}
                 onChange={(e) => setDateRange((p) => ({ ...p, endDate: e.target.value }))} />
             </div>
+
+            <button
+              type="button"
+              onClick={fetchBehaviorData}
+              disabled={loading}
+              className="p-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl text-gray-600 dark:text-gray-400 hover:text-primary-600 hover:border-primary-300 transition"
+              title="Refresh behavior metrics"
+            >
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-primary-600' : ''}`} />
+            </button>
 
             {!isStaff && (
               <button

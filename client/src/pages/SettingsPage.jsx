@@ -9,7 +9,8 @@ import toast from 'react-hot-toast';
 import useSettingsStore from '../store/settingsStore.js';
 import useAuthStore from '../store/authStore.js';
 import AnnouncementManager from '../components/settings/AnnouncementManager.jsx';
-import { Megaphone, User as UserIcon, Lock, Monitor, LineChart, Key } from 'lucide-react';
+import { Megaphone, User as UserIcon, Lock, Monitor, LineChart, Key, RefreshCw, TrendingUp, ShieldAlert } from 'lucide-react';
+import { employeeAPI } from '../api/employee.js';
 
 export default function SettingsPage({ hideHeader }) {
   const { user, updateProfile, changePassword } = useAuthStore();
@@ -18,6 +19,55 @@ export default function SettingsPage({ hideHeader }) {
   const [formData, setFormData] = useState(null);
   const [profileData, setProfileData] = useState({ fullName: user?.fullName || '', phone: user?.phone || '' });
   const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  const [myStats, setMyStats] = useState({
+    transactionCount: 0,
+    totalItems: 0,
+    totalHours: 0,
+    sessions: 0,
+    damagedCount: 0,
+    exchangeCount: 0,
+    wrongProductCount: 0,
+    sampleCount: 0,
+    status: 'Stable',
+    recentSales: [],
+  });
+  const [statsLoading, setStatsLoading] = useState(false);
+
+  const fetchMyStats = async () => {
+    const targetId = user?.id || user?._id;
+    if (!targetId) return;
+    try {
+      setStatsLoading(true);
+      const { data: res } = await employeeAPI.getDetail(targetId, { limit: 5 });
+      if (res?.success && res?.data) {
+        const { kpi, salesList, salesPagination, employee } = res.data;
+        const totalItems = kpi?.totalItems ?? 0;
+        const computedStatus = kpi?.status || employee?.status || (totalItems > 100 ? 'High Performer' : totalItems > 50 ? 'Good' : 'Stable');
+        setMyStats({
+          transactionCount: kpi?.transactionCount ?? salesPagination?.total ?? 0,
+          totalItems,
+          totalHours: kpi?.totalHours ?? 0,
+          sessions: kpi?.sessions ?? 0,
+          damagedCount: kpi?.damagedCount ?? 0,
+          exchangeCount: kpi?.exchangeCount ?? 0,
+          wrongProductCount: kpi?.wrongProductCount ?? 0,
+          sampleCount: kpi?.sampleCount ?? 0,
+          status: computedStatus,
+          recentSales: salesList || [],
+        });
+      }
+    } catch (err) {
+      console.error('Failed to load performance stats:', err);
+    } finally {
+      setStatsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'stats' && user?.role === 'staff') {
+      fetchMyStats();
+    }
+  }, [activeTab, user?.id, user?._id, user?.role]);
 
   useEffect(() => {
     fetchSettings();
@@ -233,20 +283,133 @@ export default function SettingsPage({ hideHeader }) {
 
               {activeTab === 'stats' && (
                 <div className="card p-6 lg:p-8 space-y-6">
-                  <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                    <LineChart className="w-5 h-5 text-primary-600" /> My Performance
-                  </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="p-4 bg-primary-50 dark:bg-primary-900/10 rounded-2xl border border-primary-100 dark:border-primary-900/30">
-                      <p className="text-[10px] font-bold text-primary-600 uppercase mb-1">Total Sales Processed</p>
-                      <p className="text-2xl font-black text-gray-900 dark:text-white">₹0</p>
+                  <div className="flex items-center justify-between flex-wrap gap-3">
+                    <div className="flex items-center gap-3">
+                      <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                        <LineChart className="w-5 h-5 text-primary-600" /> My Performance
+                      </h2>
+                      {myStats.status && (
+                        <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
+                          myStats.status === 'High Performer' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                          myStats.status === 'Good' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                          'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
+                        }`}>
+                          {myStats.status}
+                        </span>
+                      )}
                     </div>
-                    <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-800">
-                      <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Transactions Count</p>
-                      <p className="text-2xl font-black text-gray-900 dark:text-white">0</p>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={fetchMyStats}
+                      disabled={statsLoading}
+                      className="text-xs font-semibold text-primary-600 hover:text-primary-700 dark:text-primary-400 flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-primary-200 dark:border-primary-800/50 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition disabled:opacity-50"
+                      title="Refresh performance data"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${statsLoading ? 'animate-spin' : ''}`} />
+                      Refresh
+                    </button>
                   </div>
-                  <p className="text-xs text-gray-500 italic text-center">Performance data is updated in real-time based on your processed invoices.</p>
+
+                  {statsLoading ? (
+                    <div className="py-12 flex flex-col items-center justify-center gap-2">
+                      <Loader2 className="w-7 h-7 animate-spin text-primary-600" />
+                      <p className="text-xs text-gray-500">Loading performance data...</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="p-4 bg-primary-50 dark:bg-primary-900/10 rounded-2xl border border-primary-100 dark:border-primary-900/30">
+                          <p className="text-[10px] font-bold text-primary-600 uppercase mb-1">Invoices Processed</p>
+                          <p className="text-2xl font-black text-gray-900 dark:text-white">
+                            {myStats.transactionCount || 0}
+                          </p>
+                        </div>
+                        <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-800">
+                          <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Total Items Sold</p>
+                          <p className="text-2xl font-black text-gray-900 dark:text-white">
+                            {myStats.totalItems || 0}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Behavioral & Delivery Metrics — Synchronized with Employee Behavior */}
+                      <div className="space-y-2">
+                        <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Staff Behavioral & Product Metrics</p>
+                        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3">
+                          <div className="p-3 bg-gray-50 dark:bg-gray-800/40 rounded-xl border border-gray-100 dark:border-gray-800 text-center">
+                            <TrendingUp className="w-4 h-4 mx-auto mb-1 text-gray-900 dark:text-white" />
+                            <p className="text-sm font-bold text-gray-900 dark:text-white">{myStats.totalItems || 0}</p>
+                            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">Sales</p>
+                          </div>
+                          <div className="p-3 bg-gray-50 dark:bg-gray-800/40 rounded-xl border border-gray-100 dark:border-gray-800 text-center">
+                            <AlertTriangle className="w-4 h-4 mx-auto mb-1 text-red-600 dark:text-red-400" />
+                            <p className="text-sm font-bold text-red-600 dark:text-red-400">{myStats.damagedCount || 0}</p>
+                            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">Damaged</p>
+                          </div>
+                          <div className="p-3 bg-gray-50 dark:bg-gray-800/40 rounded-xl border border-gray-100 dark:border-gray-800 text-center">
+                            <RefreshCw className="w-4 h-4 mx-auto mb-1 text-amber-600 dark:text-amber-400" />
+                            <p className="text-sm font-bold text-amber-600 dark:text-amber-400">{myStats.exchangeCount || 0}</p>
+                            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">Exchanges</p>
+                          </div>
+                          <div className="p-3 bg-gray-50 dark:bg-gray-800/40 rounded-xl border border-gray-100 dark:border-gray-800 text-center">
+                            <ShieldAlert className="w-4 h-4 mx-auto mb-1 text-purple-600 dark:text-purple-400" />
+                            <p className="text-sm font-bold text-purple-600 dark:text-purple-400">{myStats.wrongProductCount || 0}</p>
+                            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">Wrong</p>
+                          </div>
+                          <div className="p-3 bg-gray-50 dark:bg-gray-800/40 rounded-xl border border-gray-100 dark:border-gray-800 text-center col-span-2 sm:col-span-1">
+                            <Package className="w-4 h-4 mx-auto mb-1 text-teal-600 dark:text-teal-400" />
+                            <p className="text-sm font-bold text-teal-600 dark:text-teal-400">{myStats.sampleCount || 0}</p>
+                            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">Samples</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Operational metrics for the employee */}
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <div className="p-3.5 bg-gray-50 dark:bg-gray-800/40 rounded-xl border border-gray-100 dark:border-gray-800">
+                          <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">Hours Logged</p>
+                          <p className="text-lg font-bold text-gray-900 dark:text-white mt-1">{(myStats.totalHours || 0).toFixed(1)} hrs</p>
+                        </div>
+                        <div className="p-3.5 bg-gray-50 dark:bg-gray-800/40 rounded-xl border border-gray-100 dark:border-gray-800">
+                          <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">Sessions</p>
+                          <p className="text-lg font-bold text-gray-900 dark:text-white mt-1">{myStats.sessions || 1}</p>
+                        </div>
+                        <div className="p-3.5 bg-gray-50 dark:bg-gray-800/40 rounded-xl border border-gray-100 dark:border-gray-800 col-span-2 sm:col-span-1">
+                          <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">Avg. Items / Invoice</p>
+                          <p className="text-lg font-bold text-gray-900 dark:text-white mt-1">
+                            {myStats.transactionCount > 0 ? (myStats.totalItems / myStats.transactionCount).toFixed(1) : '0'}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Recent invoices list (non-financial operational details only) */}
+                      {myStats.recentSales && myStats.recentSales.length > 0 && (
+                        <div className="mt-2 pt-4 border-t border-gray-100 dark:border-gray-800">
+                          <p className="text-xs font-bold text-gray-700 dark:text-gray-300 mb-2.5">Recent Invoices Processed</p>
+                          <div className="space-y-2">
+                            {myStats.recentSales.slice(0, 5).map((sale) => {
+                              const totalItemsCount = sale.items?.reduce((sum, item) => sum + (item.quantity || 0) + (item.pieces ? 1 : 0), 0) || sale.items?.length || 0;
+                              return (
+                                <div key={sale._id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/40 rounded-xl text-xs border border-gray-100/50 dark:border-gray-800/50">
+                                  <div>
+                                    <span className="font-semibold text-gray-900 dark:text-white">{sale.invoiceNumber}</span>
+                                    <span className="text-gray-400 ml-2">
+                                      {new Date(sale.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                  </div>
+                                  <span className="font-semibold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 px-2.5 py-1 rounded-lg">
+                                    {totalItemsCount} {totalItemsCount === 1 ? 'item' : 'items'}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      <p className="text-xs text-gray-500 italic text-center">Performance data is updated in real-time based on your processed invoices.</p>
+                    </>
+                  )}
                 </div>
               )}
             </div>

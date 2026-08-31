@@ -75,30 +75,30 @@ function ProductTable({ items, onRestock, headerColor, rowHover }) {
   return (
     <div className="card overflow-hidden hidden md:block">
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm text-center">
           <thead>
             <tr className={`border-b ${headerColor}`}>
-              <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider">Product</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider hidden sm:table-cell">Category</th>
-              <th className="text-right px-4 py-3 text-xs font-semibold uppercase tracking-wider">Qty</th>
-              <th className="text-right px-4 py-3 text-xs font-semibold uppercase tracking-wider">Min Level</th>
-              <th className="text-right px-4 py-3 text-xs font-semibold uppercase tracking-wider">Action</th>
+              <th className="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wider">Product</th>
+              <th className="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wider hidden sm:table-cell">Category</th>
+              <th className="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wider">Qty</th>
+              <th className="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wider">Min Level</th>
+              <th className="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wider">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
             {items.map((p) => (
               <tr key={p._id} className={`transition-colors ${rowHover}`}>
-                <td className="px-4 py-3">
+                <td className="px-4 py-3 text-center">
                   <p className="font-medium text-gray-900 dark:text-white">{p.name}</p>
                   <p className="text-xs text-gray-400 font-mono">{p.sku}</p>
                 </td>
-                <td className="px-4 py-3 hidden sm:table-cell">
+                <td className="px-4 py-3 hidden sm:table-cell text-center">
                   {p.category ? <span className="badge badge-blue">{p.category.name}</span> : <span className="text-gray-400 text-xs">—</span>}
                 </td>
-                <td className="px-4 py-3 text-right font-bold">{p.quantity}</td>
-                <td className="px-4 py-3 text-right text-gray-500 dark:text-gray-400">{p.minStockLevel}</td>
-                <td className="px-4 py-3 text-right">
-                  <button onClick={() => onRestock(p)} className="inline-flex items-center gap-1 text-xs font-medium text-primary-600 dark:text-primary-400 hover:underline">
+                <td className="px-4 py-3 text-center font-bold">{p.quantity}</td>
+                <td className="px-4 py-3 text-center text-gray-500 dark:text-gray-400">{p.minStockLevel}</td>
+                <td className="px-4 py-3 text-center">
+                  <button onClick={() => onRestock(p)} className="inline-flex items-center justify-center gap-1 text-xs font-medium text-primary-600 dark:text-primary-400 hover:underline">
                     <PlusCircle className="w-3.5 h-3.5" /> Restock
                   </button>
                 </td>

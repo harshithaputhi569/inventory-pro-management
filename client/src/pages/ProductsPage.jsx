@@ -466,17 +466,17 @@ export default function ProductsPage() {
           {/* ── DESKTOP TABLE (hidden on mobile) ───────────────────────── */}
           <div className="card overflow-hidden hidden md:block">
             <div className="table-container">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm text-center">
                 <thead>
                   <tr className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800">
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Product</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden lg:table-cell">SKU</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden lg:table-cell">Brand</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Category</th>
-                    {!hidePrice && <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Price</th>}
-                    <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Stock</th>
+                    <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Product</th>
+                    <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden lg:table-cell">SKU</th>
+                    <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden lg:table-cell">Brand</th>
+                    <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Category</th>
+                    {!hidePrice && <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Price</th>}
+                    <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Stock</th>
                     <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                    <th className="text-right px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                    <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
@@ -486,29 +486,29 @@ export default function ProductsPage() {
                       onClick={() => setSelectedProduct(p)}
                       className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
                     >
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 text-center">
                         <p className="font-medium text-gray-900 dark:text-white">{p.name}</p>
                         {p.supplier && <p className="text-xs text-gray-400">{p.supplier}</p>}
                       </td>
-                      <td className="px-4 py-4 hidden lg:table-cell font-mono text-xs text-gray-400">
+                      <td className="px-4 py-4 hidden lg:table-cell font-mono text-xs text-gray-400 text-center">
                         {p.sku}
                       </td>
-                      <td className="px-4 py-4 hidden lg:table-cell">
+                      <td className="px-4 py-4 hidden lg:table-cell text-center">
                         <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">{p.brand || '—'}</span>
                       </td>
-                      <td className="px-4 py-4">
+                      <td className="px-4 py-4 text-center">
                         {p.category ? <span className="badge badge-blue">{p.category.name}</span> : <span className="text-gray-400 text-xs">—</span>}
                       </td>
-                      {!hidePrice && <td className="px-4 py-3 text-right font-medium text-gray-900 dark:text-white">₹{p.price.toLocaleString('en-IN')}</td>}
-                      <td className="px-4 py-3 text-right">
+                      {!hidePrice && <td className="px-4 py-3 text-center font-medium text-gray-900 dark:text-white">₹{p.price.toLocaleString('en-IN')}</td>}
+                      <td className="px-4 py-3 text-center">
                         <p className="font-medium text-gray-900 dark:text-white">{p.quantity}</p>
                         <p className="text-[10px] text-gray-400 uppercase">{p.unit}</p>
                       </td>
                       <td className="px-4 py-3 text-center">
                         <span className={`badge ${statusColors[p.stockStatus]}`}>{statusLabels[p.stockStatus]}</span>
                       </td>
-                      <td className="px-4 py-3 text-right">
-                        <div className="flex items-center justify-end gap-1">
+                      <td className="px-4 py-3 text-center">
+                        <div className="flex items-center justify-center gap-1">
                           <button onClick={(e) => { e.stopPropagation(); setStockProduct(p); }} title="Adjust stock" className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors">
                             <PlusCircle className="w-4 h-4" />
                           </button>

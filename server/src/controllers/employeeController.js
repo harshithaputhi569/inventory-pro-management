@@ -1,6 +1,8 @@
 import User from '../models/User.js';
 import Sale from '../models/Sale.js';
 import Attendance from '../models/Attendance.js';
+import Branch from '../models/Branch.js';
+import Product from '../models/Product.js';
 import mongoose from 'mongoose';
 import ExcelJS from 'exceljs';
 
@@ -28,7 +30,7 @@ export const getEmployeeBehavior = async (req, res, next) => {
     const userMatch = { role: 'staff', storeId: req.user.storeId };
     
     if (req.user.role === 'staff') {
-      userMatch._id = req.user.id;
+      userMatch._id = new mongoose.Types.ObjectId(req.user.id || req.user._id);
     } else if (req.user.role !== 'admin' && req.user.branchId) {
       userMatch.branchId = new mongoose.Types.ObjectId(req.user.branchId);
     } else if (branchId) {
@@ -64,6 +66,18 @@ export const getEmployeeBehavior = async (req, res, next) => {
       { $addFields: { salesTransactions: { $size: '$totalSales' } } },
     ]);
 
+    // ── Single sales totals aggregation for ALL employees ────────────────────
+    const salesTotalsAgg = await Sale.aggregate([
+      { $match: { soldBy: { $in: employeeIds }, ...(dateFilter.createdAt ? { createdAt: dateFilter.createdAt } : {}) } },
+      {
+        $group: {
+          _id: '$soldBy',
+          totalSalesProcessed: { $sum: '$totalAmount' },
+          transactionsCount: { $sum: 1 },
+        },
+      },
+    ]);
+
     // ── Single attendance aggregation for ALL employees ──────────────────────
     const attendanceAgg = await Attendance.aggregate([
       {
@@ -86,10 +100,12 @@ export const getEmployeeBehavior = async (req, res, next) => {
 
     // ── Index by employee ID ─────────────────────────────────────────────────
     const salesMap = Object.fromEntries(salesAgg.map((s) => [s._id.toString(), s]));
+    const salesTotalsMap = Object.fromEntries(salesTotalsAgg.map((s) => [s._id.toString(), s]));
     const attendanceMap = Object.fromEntries(attendanceAgg.map((a) => [a._id.toString(), a]));
 
     const behaviorData = employees.map((emp) => {
       const sales = salesMap[emp._id.toString()] || {};
+      const salesTotals = salesTotalsMap[emp._id.toString()] || {};
       const att = attendanceMap[emp._id.toString()] || {};
       const totalItems = sales.totalItems || 0;
       return {
@@ -100,7 +116,8 @@ export const getEmployeeBehavior = async (req, res, next) => {
         phone: emp.phone || null,
         branchId: emp.branchId,
         branchName: emp.branchId?.name || null,
-        salesTransactions: sales.salesTransactions || 0,
+        salesTransactions: salesTotals.transactionsCount || sales.salesTransactions || 0,
+        totalSalesProcessed: salesTotals.totalSalesProcessed || 0,
         salesCount: totalItems,
         damagedCount: sales.damagedCount || 0,
         exchangeCount: sales.exchangeCount || 0,
@@ -130,14 +147,19 @@ export const getEmployeeDetail = async (req, res, next) => {
     const { id } = req.params;
     const { startDate, endDate, page = 1, limit = 20 } = req.query;
 
+    const isStaff = req.user.role === 'staff';
+    const isSelf = id === 'me' || id === req.user.id || id === req.user._id?.toString();
+
     // Security: Staff can only view their own detail
-    if (req.user.role === 'staff' && id !== req.user.id) {
+    if (isStaff && !isSelf) {
       return res.status(403).json({ success: false, message: 'You can only view your own report' });
     }
 
+    const targetId = isSelf ? req.user.id : id;
+
     // Validate employee belongs to same store
     const employee = await User.findOne({
-      _id: id,
+      _id: targetId,
       storeId: req.user.storeId,
     })
       .select('-password')
@@ -150,7 +172,7 @@ export const getEmployeeDetail = async (req, res, next) => {
 
     const dateFilter = buildDateFilter(startDate, endDate, 'createdAt');
     const attendanceDateFilter = buildDateFilter(startDate, endDate, 'loginTime');
-    const empId = new mongoose.Types.ObjectId(id);
+    const empId = new mongoose.Types.ObjectId(targetId);
 
     // ── KPI Summary ──────────────────────────────────────────────────────────
     const [kpiAgg] = await Sale.aggregate([
@@ -165,6 +187,18 @@ export const getEmployeeDetail = async (req, res, next) => {
           exchangeCount: { $sum: { $cond: ['$items.isExchange', '$items.quantity', 0] } },
           sampleCount: { $sum: { $cond: ['$items.isSample', '$items.quantity', 0] } },
           wrongProductCount: { $sum: { $cond: ['$items.isWrongProduct', '$items.quantity', 0] } },
+        },
+      },
+    ]);
+
+    // ── Sales Summary (Direct on Sale model for totalAmount and transaction count) ──
+    const [salesSummary] = await Sale.aggregate([
+      { $match: { soldBy: empId, ...(dateFilter.createdAt ? { createdAt: dateFilter.createdAt } : {}) } },
+      {
+        $group: {
+          _id: null,
+          totalSalesAmount: { $sum: '$totalAmount' },
+          transactionCount: { $sum: 1 },
         },
       },
     ]);
@@ -190,7 +224,7 @@ export const getEmployeeDetail = async (req, res, next) => {
     // ── Sales list (paginated) ───────────────────────────────────────────────
     const salesQuery = {
       soldBy: empId,
-      ...(dateFilter.createdAt ? { createdAt: dateFilter.createdAt } : {}),
+      ...(dateFilter.createdAt ? { createdAt: dateFilter.createdAt } : {})
     };
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const totalSales = await Sale.countDocuments(salesQuery);
@@ -244,13 +278,21 @@ export const getEmployeeDetail = async (req, res, next) => {
       { $limit: 100 },
     ]);
 
+    const totalDetailItems = kpiAgg?.totalItems || 0;
+    const computedStatus = totalDetailItems > 100 ? 'High Performer' : totalDetailItems > 50 ? 'Good' : 'Stable';
+
     res.status(200).json({
       success: true,
       data: {
-        employee,
+        employee: {
+          ...employee,
+          status: computedStatus,
+        },
         kpi: {
-          totalItems: kpiAgg?.totalItems || 0,
-          totalRevenue: kpiAgg?.totalRevenue || 0,
+          totalSalesProcessed: salesSummary?.totalSalesAmount || 0,
+          transactionCount: salesSummary?.transactionCount || totalSales || 0,
+          totalItems: totalDetailItems,
+          totalRevenue: salesSummary?.totalSalesAmount ?? (kpiAgg?.totalRevenue || 0),
           damagedCount: kpiAgg?.damagedCount || 0,
           exchangeCount: kpiAgg?.exchangeCount || 0,
           sampleCount: kpiAgg?.sampleCount || 0,
@@ -259,6 +301,7 @@ export const getEmployeeDetail = async (req, res, next) => {
           sessions: attKpi?.sessions || 0,
           lastLogin: attKpi?.lastLogin || null,
           lastLogout: attKpi?.lastLogout || null,
+          status: computedStatus,
         },
         salesList,
         salesPagination: { total: totalSales, page: parseInt(page), limit: parseInt(limit) },

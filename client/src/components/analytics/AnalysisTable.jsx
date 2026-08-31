@@ -64,11 +64,11 @@ export default function AnalysisTable({
     <div className="space-y-4 animate-fade-in">
       <div className={`bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm transition-opacity duration-200 ${isUpdating ? 'opacity-60 pointer-events-none' : 'opacity-100'}`}>
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-center border-collapse">
             <thead>
               <tr className="bg-gray-50 dark:bg-gray-800/50">
                 {showCheckboxes && (
-                  <th className="px-6 py-4 w-12">
+                  <th className="px-6 py-4 w-12 text-center">
                     <input 
                       type="checkbox" 
                       className="rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 cursor-pointer"
@@ -80,16 +80,16 @@ export default function AnalysisTable({
                 {type === 'product' && (
                   <th 
                     onClick={() => handleSort('sku')}
-                    className="px-4 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[120px] md:w-32 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
+                    className="px-4 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[120px] md:w-32 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors text-center"
                   >
-                    <div className="flex items-center gap-1">SKU <SortIcon field="sku" /></div>
+                    <div className="flex items-center justify-center gap-1">SKU <SortIcon field="sku" /></div>
                   </th>
                 )}
                 <th 
                   onClick={() => handleSort(type === 'product' ? 'name' : '_id')}
-                  className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[180px] md:min-w-0 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
+                  className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[180px] md:min-w-0 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors text-center"
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     {type === 'product' ? 'Product Name' : 'Date / Period'} <SortIcon field={type === 'product' ? 'name' : '_id'} />
                     {type === 'time' && allowedIntervals.length > 1 && (
                       <div className="relative group">
@@ -107,28 +107,28 @@ export default function AnalysisTable({
                     )}
                   </div>
                 </th>
-                <th onClick={() => handleSort('unitSalesCount')} className="px-4 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
-                  <div className="flex items-center justify-end gap-1">Units Sold <SortIcon field="unitSalesCount" /></div>
+                <th onClick={() => handleSort('unitSalesCount')} className="px-4 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+                  <div className="flex items-center justify-center gap-1">Units Sold <SortIcon field="unitSalesCount" /></div>
                 </th>
-                <th onClick={() => handleSort('pieceSalesCount')} className="px-4 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
-                  <div className="flex items-center justify-end gap-1">Pieces Sold <SortIcon field="pieceSalesCount" /></div>
+                <th onClick={() => handleSort('pieceSalesCount')} className="px-4 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+                  <div className="flex items-center justify-center gap-1">Pieces Sold <SortIcon field="pieceSalesCount" /></div>
                 </th>
                 {!hidePrice && (
-                  <th onClick={() => handleSort('totalSales')} className="px-4 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
-                    <div className="flex items-center justify-end gap-1">Revenue <SortIcon field="totalSales" /></div>
+                  <th onClick={() => handleSort('totalSales')} className="px-4 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+                    <div className="flex items-center justify-center gap-1">Revenue <SortIcon field="totalSales" /></div>
                   </th>
                 )}
-                <th onClick={() => handleSort('sampleCount')} className="px-4 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
-                  <div className="flex items-center justify-end gap-1">Samples <SortIcon field="sampleCount" /></div>
+                <th onClick={() => handleSort('sampleCount')} className="px-4 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+                  <div className="flex items-center justify-center gap-1">Samples <SortIcon field="sampleCount" /></div>
                 </th>
-                <th onClick={() => handleSort('damagedCount')} className="px-4 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
-                  <div className="flex items-center justify-end gap-1">Damages <SortIcon field="damagedCount" /></div>
+                <th onClick={() => handleSort('damagedCount')} className="px-4 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+                  <div className="flex items-center justify-center gap-1">Damages <SortIcon field="damagedCount" /></div>
                 </th>
-                <th onClick={() => handleSort('exchangeCount')} className="px-4 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
-                  <div className="flex items-center justify-end gap-1">Exchanges <SortIcon field="exchangeCount" /></div>
+                <th onClick={() => handleSort('exchangeCount')} className="px-4 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+                  <div className="flex items-center justify-center gap-1">Exchanges <SortIcon field="exchangeCount" /></div>
                 </th>
-                <th onClick={() => handleSort('wrongProductCount')} className="px-4 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
-                  <div className="flex items-center justify-end gap-1">Wrong Del. <SortIcon field="wrongProductCount" /></div>
+                <th onClick={() => handleSort('wrongProductCount')} className="px-4 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+                  <div className="flex items-center justify-center gap-1">Wrong Delivery <SortIcon field="wrongProductCount" /></div>
                 </th>
               </tr>
             </thead>
@@ -146,7 +146,7 @@ export default function AnalysisTable({
                     onClick={() => showCheckboxes && onToggleItem(itemKey)}
                   >
                     {showCheckboxes && (
-                      <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                      <td className="px-6 py-4 text-center" onClick={(e) => e.stopPropagation()}>
                         <input 
                           type="checkbox" 
                           className="rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 cursor-pointer"
@@ -156,39 +156,39 @@ export default function AnalysisTable({
                       </td>
                     )}
                     {type === 'product' && (
-                      <td className="px-4 py-4">
+                      <td className="px-4 py-4 text-center">
                         <span className="text-[10px] md:text-xs font-mono font-bold text-primary-600 bg-primary-50 dark:bg-primary-900/20 px-2 py-1 rounded whitespace-nowrap">
                           {row.sku || 'N/A'}
                         </span>
                       </td>
                     )}
-                    <td className="px-6 py-4">
-                      <span className={`text-sm font-semibold ${type === 'time' ? 'text-primary-600 font-mono' : 'text-gray-900 dark:text-white'}`}>
+                    <td className="px-6 py-4 text-center">
+                      <span className={`inline-block text-center text-sm font-semibold ${type === 'time' ? 'text-primary-600 font-mono' : 'text-gray-900 dark:text-white'}`}>
                         {row.name || row._id}
                       </span>
                     </td>
-                    <td className="px-4 py-4 text-right">
-                      <span className="text-sm font-bold text-gray-900 dark:text-white">{row.unitSalesCount || 0}</span>
+                    <td className="px-4 py-4 text-center">
+                      <span className="inline-block text-center text-sm font-bold text-gray-900 dark:text-white">{row.unitSalesCount || 0}</span>
                     </td>
-                    <td className="px-4 py-4 text-right">
-                      <span className="text-sm font-bold text-gray-900 dark:text-white">{row.pieceSalesCount || 0}</span>
+                    <td className="px-4 py-4 text-center">
+                      <span className="inline-block text-center text-sm font-bold text-gray-900 dark:text-white">{row.pieceSalesCount || 0}</span>
                     </td>
                     {!hidePrice && (
-                      <td className="px-4 py-4 text-right">
-                        <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">₹{(row.totalSales || 0).toLocaleString('en-IN')}</span>
+                      <td className="px-4 py-4 text-center">
+                        <span className="inline-block text-center text-sm font-bold text-emerald-600 dark:text-emerald-400">₹{(row.totalSales || 0).toLocaleString('en-IN')}</span>
                       </td>
                     )}
-                    <td className="px-4 py-4 text-right">
-                      <span className="text-sm text-gray-600 dark:text-gray-400">{row.sampleCount}</span>
+                    <td className="px-4 py-4 text-center">
+                      <span className="inline-block text-center text-sm text-gray-600 dark:text-gray-400">{row.sampleCount ?? 0}</span>
                     </td>
-                    <td className="px-4 py-4 text-right">
-                      <span className="text-sm font-semibold text-red-600">{row.damagedCount}</span>
+                    <td className="px-4 py-4 text-center">
+                      <span className="inline-block text-center text-sm font-semibold text-red-600">{row.damagedCount ?? 0}</span>
                     </td>
-                    <td className="px-4 py-4 text-right">
-                      <span className="text-sm font-semibold text-amber-600">{row.exchangeCount}</span>
+                    <td className="px-4 py-4 text-center">
+                      <span className="inline-block text-center text-sm font-semibold text-amber-600">{row.exchangeCount ?? 0}</span>
                     </td>
-                    <td className="px-4 py-4 text-right">
-                      <span className="text-sm font-semibold text-purple-600">{row.wrongProductCount}</span>
+                    <td className="px-4 py-4 text-center">
+                      <span className="inline-block text-center text-sm font-semibold text-purple-600">{row.wrongProductCount ?? 0}</span>
                     </td>
                   </tr>
                 );

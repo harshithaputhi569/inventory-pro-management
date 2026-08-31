@@ -152,9 +152,15 @@ function UserEditModal({ user, onClose }) {
 }
 
 const roleColors = {
-  admin: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
-  manager: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
-  staff: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+  admin: 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300 border border-purple-200 dark:border-purple-800/60',
+  manager: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60',
+  staff: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60',
+};
+
+const roleAvatarStyles = {
+  admin: 'bg-gradient-to-br from-purple-500 to-indigo-600 text-white',
+  manager: 'bg-gradient-to-br from-blue-500 to-cyan-600 text-white',
+  staff: 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white',
 };
 
 export default function UsersPage({ hideHeader }) {
@@ -337,69 +343,106 @@ export default function UsersPage({ hideHeader }) {
           {/* ── DESKTOP TABLE (hidden on mobile) ─────────────────────────── */}
           <div className="card overflow-hidden hidden md:block">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm table-fixed">
+              <table className="w-full text-sm table-fixed text-center">
                 <thead>
                   <tr className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800">
-                    <th className="w-1/5 text-left px-4 py-4 font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-xs">Staff</th>
-                    <th className="w-1/5 text-center px-4 py-4 font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-xs">Role</th>
-                    <th className="w-1/5 text-center px-4 py-4 font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-xs">Branch</th>
-                    <th className="w-1/5 text-center px-4 py-4 font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-xs">Status</th>
-                    {isAdmin && <th className="w-1/5 text-center px-4 py-4 font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-xs">Actions</th>}
+                    <th className="w-[32%] text-center px-4 py-4 font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-xs">Staff</th>
+                    <th className="w-[15%] text-center px-4 py-4 font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-xs">Role</th>
+                    <th className="w-[23%] text-center px-4 py-4 font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-xs">Branch</th>
+                    <th className="w-[15%] text-center px-4 py-4 font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-xs">Status</th>
+                    {isAdmin && <th className="w-[15%] text-center px-4 py-4 font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-xs">Actions</th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
                   {users.map((u) => (
                     <tr key={u._id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/20 transition-colors">
-                      <td className="w-1/5 px-4 py-4">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center font-bold text-gray-600 dark:text-gray-400 uppercase flex-shrink-0">
-                            {u.fullName.charAt(0)}
+                      <td className="w-[32%] px-4 py-4 text-center">
+                        <div className="w-64 mx-auto flex items-center gap-3.5 text-left">
+                          <div className="relative flex-shrink-0">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm uppercase shadow-sm ${roleAvatarStyles[u.role] || roleAvatarStyles.staff}`}>
+                              {u.fullName.charAt(0)}
+                            </div>
+                            <span 
+                              className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dark:border-gray-900 ${
+                                u.isOnline ? 'bg-green-500 animate-pulse' : 'bg-gray-300'
+                              }`} 
+                              title={u.isOnline ? 'Online' : 'Offline'}
+                            />
                           </div>
-                          <div className="min-w-0">
-                            <p className="font-bold text-gray-900 dark:text-white flex items-center gap-2 truncate">
-                              {u.fullName}
-                              {u._id === currentUser.id && <span className="text-[10px] text-primary-600 font-normal whitespace-nowrap">(You)</span>}
-                              <span className={`w-2 h-2 rounded-full flex-shrink-0 ${u.isOnline ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`} />
-                            </p>
-                            <p className="text-xs text-gray-500 font-mono truncate">@{u.username}</p>
-                            {u.phone && <p className="text-xs text-gray-400 flex items-center gap-1 mt-0.5 truncate"><Phone className="w-3 h-3 flex-shrink-0" />{u.phone}</p>}
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="font-bold text-gray-900 dark:text-white text-sm truncate max-w-[140px]" title={u.fullName}>
+                                {u.fullName}
+                              </span>
+                              {u._id === currentUser.id && (
+                                <span className="px-1.5 py-0.5 text-[10px] font-bold rounded bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300 whitespace-nowrap flex-shrink-0">
+                                  You
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium truncate">@{u.username}</p>
+                            {u.phone && (
+                              <p className="text-[11px] text-gray-400 dark:text-gray-500 flex items-center gap-1 mt-0.5 truncate">
+                                <Phone className="w-3 h-3 flex-shrink-0 text-gray-400" />
+                                <span>{u.phone}</span>
+                              </p>
+                            )}
                           </div>
                         </div>
                       </td>
-                      <td className="w-1/5 px-4 py-4 text-center">
-                        <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${roleColors[u.role]}`}>{u.role}</span>
+                      <td className="w-[15%] px-4 py-4 text-center">
+                        <span className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider ${roleColors[u.role]}`}>
+                          {u.role}
+                        </span>
                       </td>
-                      <td className="w-1/5 px-4 py-4 text-center text-gray-600 dark:text-gray-300">
+                      <td className="w-[23%] px-4 py-4 text-center text-gray-600 dark:text-gray-300">
                         {u.branchId ? (
-                          <div className="flex items-center justify-center gap-1.5 truncate"><Store className="w-3.5 h-3.5 opacity-50 flex-shrink-0" /><span className="truncate">{u.branchId.name}</span></div>
+                          <div className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl bg-gray-50 dark:bg-gray-800/80 border border-gray-100 dark:border-gray-800 text-xs font-semibold text-gray-700 dark:text-gray-200">
+                            <Store className="w-3.5 h-3.5 text-primary-500 flex-shrink-0" />
+                            <span className="truncate max-w-[140px]" title={u.branchId.name}>{u.branchId.name}</span>
+                          </div>
                         ) : (
                           <span className="text-gray-400 text-xs italic">Unassigned</span>
                         )}
                       </td>
-                      <td className="w-1/5 px-4 py-4">
+                      <td className="w-[15%] px-4 py-4 text-center">
                         <div className="flex justify-center">
                           {u.isActive ? (
-                            <div className="flex items-center gap-1.5 text-green-600 text-xs font-medium"><Check className="w-3.5 h-3.5" /> Active</div>
+                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40">
+                              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                              <span>Active</span>
+                            </div>
                           ) : (
-                            <div className="flex items-center gap-1.5 text-red-500 text-xs font-medium"><Shield className="w-3.5 h-3.5" /> Inactive</div>
+                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-300 border border-red-200/60 dark:border-red-800/40">
+                              <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                              <span>Inactive</span>
+                            </div>
                           )}
                         </div>
                       </td>
                       {isAdmin || (isManager && u.role === 'staff') ? (
-                        <td className="w-1/5 px-4 py-4">
-                          <div className="flex items-center justify-center gap-1">
-                            <button onClick={() => setEditUser(u)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-500 hover:text-primary-600">
+                        <td className="w-[15%] px-4 py-4 text-center">
+                          <div className="flex items-center justify-center gap-1.5">
+                            <button 
+                              onClick={() => setEditUser(u)} 
+                              title="Edit user"
+                              className="p-2 rounded-xl text-gray-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 border border-transparent hover:border-primary-200 dark:hover:border-primary-800 transition-all"
+                            >
                               <Pencil className="w-4 h-4" />
                             </button>
                             {u._id !== currentUser.id && (
-                              <button onClick={() => handleDelete(u._id)} className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg text-red-500">
+                              <button 
+                                onClick={() => handleDelete(u._id)} 
+                                title="Deactivate user"
+                                className="p-2 rounded-xl text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 border border-transparent hover:border-red-200 dark:hover:border-red-800 transition-all"
+                              >
                                 <Trash2 className="w-4 h-4" />
                               </button>
                             )}
                           </div>
                         </td>
                       ) : isAdmin && (
-                        <td className="w-1/5 px-4 py-4"></td>
+                        <td className="w-[15%] px-4 py-4 text-center"></td>
                       )}
                     </tr>
                   ))}
