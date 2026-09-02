@@ -169,11 +169,7 @@ export default function SaleDetailsModal({ sale: initialSale, onClose }) {
                       <span className="text-xs font-bold uppercase text-gray-500">{sale.paymentMethod}</span>
                     </div>
                   )}
-                  {sale.totalWeight > 0 && (
-                    <span className="text-[10px] font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-lg">
-                      {sale.totalWeight.toFixed(2)} KG
-                    </span>
-                  )}
+
                 </div>
               </div>
             </div>
