@@ -258,7 +258,7 @@ export default function DashboardPage() {
     fetchSummary();
     fetchProducts({ limit: 100 }); // Pre-fetch first batch for inspection
     if (!settings) fetchSettings();
-  }, [settings]);
+  }, []);
 
   if (isLoading || !summary) {
     return (
